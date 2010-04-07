@@ -1,0 +1,16 @@
+h1. Enhanced Memory Store
+
+An ActiveSupport cache store that extends MemoryStore to add cache
+expiration, making it compatible with MemCacheStore.
+
+h2. Requirements
+
+* Rails 2.1
+
+h2. Usage
+
+This is a drop-in replacement for the memcache store that ships with Rails. To
+enable, set the @config.cache_store@ option to @:enhanced_memory_store@
+in the config for your environment
+
+<pre><code>config.cache_store = :enhanced_memory_store</code></pre>
