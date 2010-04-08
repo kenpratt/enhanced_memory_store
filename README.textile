@@ -14,3 +14,10 @@ enable, set the @config.cache_store@ option to @:enhanced_memory_store@
 in the config for your environment.
 
 <pre><code>config.cache_store = :enhanced_memory_store</code></pre>
+
+Then you can use all the normal Rails caching goodness, including
+object caching:
+
+<pre><code>Rails.cache.fetch("#{user_id}/heavy_calc", :expires_in => 1.hour) do
+  heavy_calc(user_id)
+end</code></pre>
