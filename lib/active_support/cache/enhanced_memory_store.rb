@@ -17,6 +17,10 @@
 module ActiveSupport
   module Cache
     class EnhancedMemoryStore < MemoryStore
+
+      # Reads a value from the cache.
+      #
+      # If the entry has expired, it will be purged.
       def read(name, options = nil)
         wrapper = super(name, options)
         if wrapper && wrapper.kind_of?(Hash)
@@ -39,12 +43,25 @@ module ActiveSupport
         end
       end
 
+      # Writes a value to the cache.
+      #
+      # Possible options:
+      # - +:unless_exist+ - set to true if you don't want to update the cache
+      #   if the key is already set.
+      # - +:expires_in+ - the number of seconds that this value may stay in
+      #   the cache. See ActiveSupport::Cache::Store#write for an example.
       def write(name, value, options = nil)
-        wrapper = if expires_in = options.delete(:expires_in)
-                    { :value => value, :expires_at => expires_in.from_now }
+        # check :unless_exist option
+        return nil if options && options[:unless_exist] && exist?(name)
+
+        # create wrapper with expiry data
+        wrapper = if options && options[:expires_in]
+                    { :value => value, :expires_at => expires_in(options).from_now }
                   else
                     { :value => value }
                   end
+
+        # call ActiveSupport::Cache::MemoryStore#write
         super(name, wrapper, options)
       end
     end
